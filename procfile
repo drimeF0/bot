@@ -1,1 +1,1 @@
-worker: python botyara.py
+worker:python3 botyara.py

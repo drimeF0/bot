@@ -11,3 +11,4 @@ pylint == 2.5.2
 apiai == 1.2.3
 cython == 0.29.21
 numpy == 1.19.1
+requests == 2.19.1
