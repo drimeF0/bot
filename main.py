@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands
 import json
 from datetime import datetime
+import os
+
 bot = commands.Bot(command_prefix="CC.",intents=discord.Intents.all())
 log_channel = None
 try:
@@ -28,4 +30,4 @@ async def  on_member_update(before, after):
 
 
 
-bot.run("токен-бота")
+bot.run(os.environ['TOKEN'])
