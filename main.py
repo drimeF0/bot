@@ -29,5 +29,5 @@ async def  on_member_update(before, after):
 	now = now.strftime("%m/%d/%Y, %H:%M:%S")
 	if before.status != after.status:
 		await bot.get_channel(log_channel).send(f"```{now} участник {after.name} сменил статус с {before.status} на {after.status}```")
-
+import os
 bot.run(os.environ['TOKEN'])
