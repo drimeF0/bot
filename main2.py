@@ -13,7 +13,7 @@ def load():
 		msg = load(msg,f)
 bot = commands.Bot(command_prefix="rass.")
 
-
+#a
 @bot.event
 async def on_message(message):
 	global msg
