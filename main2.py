@@ -31,7 +31,7 @@ async def on_message(message):
 				if message.author.id != bot.client.id:
 					await message.channel.send(msg)
 					ignore_id.append(message.author.id)
-@commands.is_owner()
+
 @bot.command()
 async def set_string(ctx,*,string):
 	global msg
