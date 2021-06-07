@@ -28,7 +28,7 @@ async def on_message(message):
 	if message.guild is None:
 		if msg:
 			if not message.author.id in ignore_id:
-				if message.author.id != bot.client.id:
+				if message.author.id != bot.user.id:
 					await message.channel.send(msg)
 					ignore_id.append(message.author.id)
 
@@ -37,7 +37,7 @@ async def set_string(ctx,*,string):
 	global msg
 	global save
 	msg = string
-	await ctx.message.send("установлено")
+	await ctx.channel.send("установлено")
 	save()
 
 bot.run(environ["TOKEN"],bot=False)
