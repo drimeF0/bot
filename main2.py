@@ -99,7 +99,9 @@ async def clear_role(ctx):
 
 def get_current_time() -> datetime:
         delta = datetime.timedelta(hours=3, minutes=0)
-        return datetime.datetime.now(datetime.timezone.utc) + delta
+        tmp = datetime.datetime.now(datetime.timezone.utc) + delta
+
+        return tmp.strftime("%A, %B %d %Y @ %H:%M:%S %p")
 
 @bot.event
 async def  on_member_update(before, after):
