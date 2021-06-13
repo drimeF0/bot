@@ -11,7 +11,7 @@ def save():
 
 
 def load():
-	with open("save.json","w") as f:
+	with open("save.json","r") as f:
 		config = json.load(f)
 
 try:
