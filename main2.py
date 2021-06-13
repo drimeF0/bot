@@ -43,7 +43,7 @@ async def delete(ctx,user:discord.Member):
 		await ctx.send("такого юзера нет в списке")
 
 @commands.is_owner()
-@bot.command(name="")
+@bot.command()
 async def show(ctx):
 	template = "```"
 	for user in config["white_list"]:
@@ -51,8 +51,8 @@ async def show(ctx):
 	template = template + "```"
 	await ctx.send(template)
 @commands.is_owner()
-@bot.command(name="clear")
-async def delete(ctx):
+@bot.command()
+async def clear(ctx):
 	config["white_list"] = []
 	await ctx.send("успешно очищено")
 	save()
@@ -63,14 +63,14 @@ async def delete(ctx):
 
 @commands.is_owner()
 @bot.command()
-async def add(ctx,role:discord.Role):
+async def add_role(ctx,role:discord.Role):
 	config["role_whitelist"].append(role.id)
 	await ctx.send("успешно установлено")
 	save()
 
 @commands.is_owner()
-@bot.command(name="del_role")
-async def delete(ctx,role:discord.Role):
+@bot.command()
+async def del_role(ctx,role:discord.Role):
 	try:
 		config["role_whitelist"].remove(role.id)
 		await ctx.send("успешно удалено")
@@ -79,16 +79,16 @@ async def delete(ctx,role:discord.Role):
 		await ctx.send("такой роли нет в списке")
 
 @commands.is_owner()
-@bot.command(name="show_role")
-async def show(ctx):
+@bot.command()
+async def show_role(ctx):
 	template = "```"
 	for role in config["role_whitelist"]:
 		template = template + ctx.guild.get_role(role).name
 	template = template + "```"
 	await ctx.send(template)
 @commands.is_owner()
-@bot.command(name="clear_role")
-async def delete(ctx):
+@bot.command()
+async def clear_role(ctx):
 	config["role_whitelist"] = []
 	await ctx.send("успешно очищено")
 	save()
