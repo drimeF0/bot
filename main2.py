@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import json
 import datetime
-bot = commands.Bot(command_prefix="beta.",intents=discord.Intents.all())
+bot = commands.Bot(command_prefix="CC.",intents=discord.Intents.all())
 config = {"white_list":[],"log_channel":None}
 def save():
 	with open("save.json","w") as f:
@@ -71,5 +71,5 @@ async def  on_member_update(before, after):
 
 
 import os
-token = os.environ("TOKEN")
+token = os.environ["TOKEN"]
 bot.run(token)
