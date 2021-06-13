@@ -47,7 +47,7 @@ async def delete(ctx,user:discord.Member):
 async def show(ctx):
 	template = "```"
 	for user in config["white_list"]:
-		template = template + bot.get_user(user).name
+		template = template + " " + bot.get_user(user).name
 	template = template + "```"
 	await ctx.send(template)
 @commands.is_owner()
