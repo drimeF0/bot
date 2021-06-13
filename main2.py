@@ -3,7 +3,7 @@ from discord.ext import commands
 import json
 import datetime
 bot = commands.Bot(command_prefix="CC.",intents=discord.Intents.all())
-config = {"white_list":[],"log_channel":None}
+config = {"white_list":[],"log_channel":None,"role_whitelist":[]}
 def save():
 	with open("save.json","w") as f:
 		json.dump(config, f)
@@ -11,7 +11,7 @@ def save():
 
 
 def load():
-	with open("save.json","r") as f:
+	with open("save.json","w") as f:
 		config = json.load(f)
 
 try:
@@ -50,12 +50,52 @@ async def show(ctx):
 		template = template + bot.get_user(user).name
 	template = template + "```"
 	await ctx.send(template)
-# @commands.is_owner()
+@commands.is_owner()
 @bot.command(name="clear")
 async def delete(ctx):
 	config["white_list"] = []
 	await ctx.send("успешно очищено")
 	save()
+
+#роли
+
+
+
+@commands.is_owner()
+@bot.command()
+async def add(ctx,role:discord.Role):
+	config["role_whitelist"].append(role.id)
+	await ctx.send("успешно установлено")
+	save()
+
+@commands.is_owner()
+@bot.command(name="del_role")
+async def delete(ctx,role:discord.Role):
+	try:
+		config["role_whitelist"].remove(role.id)
+		await ctx.send("успешно удалено")
+		save()
+	except:
+		await ctx.send("такой роли нет в списке")
+
+@commands.is_owner()
+@bot.command(name="show_role")
+async def show(ctx):
+	template = "```"
+	for role in config["role_whitelist"]:
+		template = template + ctx.guild.get_role(role).name
+	template = template + "```"
+	await ctx.send(template)
+@commands.is_owner()
+@bot.command(name="clear_role")
+async def delete(ctx):
+	config["role_whitelist"] = []
+	await ctx.send("успешно очищено")
+	save()
+
+
+
+
 
 def get_current_time() -> datetime:
         delta = datetime.timedelta(hours=3, minutes=0)
@@ -67,7 +107,12 @@ async def  on_member_update(before, after):
 	now = get_current_time()
 	if before.status != after.status:
 		if after.id in config["white_list"]:
-			await bot.get_channel(config["log_channel"]).send(f"beta: {now} участник {after.name} сменил статус с {before.status} на {after.status}")
+			await bot.get_channel(config["log_channel"]).send(f"```{now} участник {after.name} сменил статус с {before.status} на {after.status} ```")
+		else:
+			for role in after.roles:
+				if role.id in config["role_whitelist"]:
+					await bot.get_channel(config["log_channel"]).send(f"``` {now} участник {after.name} сменил статус с {before.status} на {after.status} ```")
+					break
 
 
 import os
