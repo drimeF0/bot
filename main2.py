@@ -11,7 +11,7 @@ def save():
 
 
 def load():
-	with open("save.json","r") as f:
+	with open("save.json","w") as f:
 		config = json.load(f)
 
 try:
@@ -19,20 +19,20 @@ try:
 except Exception as e:
 	print(e,":","можно игнорить")
 	save()
-
+@commands.is_owner()
 @bot.command()
 async def set_log_channel(ctx,id:discord.TextChannel):
 	config["log_channel"] = id.id
 	await ctx.send("успешно установлено")
 	save()
-
+@commands.is_owner()
 @bot.command()
 async def add(ctx,user:discord.Member):
 	config["white_list"].append(user.id)
 	await ctx.send("успешно установлено")
 	save()
 
-
+@commands.is_owner()
 @bot.command(name="del")
 async def delete(ctx,user:discord.Member):
 	try:
@@ -42,7 +42,7 @@ async def delete(ctx,user:discord.Member):
 	except:
 		await ctx.send("такого юзера нет в списке")
 
-
+@commands.is_owner()
 @bot.command()
 async def show(ctx):
 	template = "```"
@@ -50,7 +50,7 @@ async def show(ctx):
 		template = template + bot.get_user(user).name
 	template = template + "```"
 	await ctx.send(template)
-
+@commands.is_owner()
 @bot.command()
 async def clear(ctx):
 	config["white_list"] = []
@@ -61,14 +61,14 @@ async def clear(ctx):
 
 
 
-
+@commands.is_owner()
 @bot.command()
 async def add_role(ctx,role:discord.Role):
 	config["role_whitelist"].append(role.id)
 	await ctx.send("успешно установлено")
 	save()
 
-
+@commands.is_owner()
 @bot.command()
 async def del_role(ctx,role:discord.Role):
 	try:
@@ -78,13 +78,15 @@ async def del_role(ctx,role:discord.Role):
 	except:
 		await ctx.send("такой роли нет в списке")
 
+@commands.is_owner()
 @bot.command()
 async def show_role(ctx):
 	template = "```"
 	for role in config["role_whitelist"]:
-		template = template + ctx.guild.get_role(role).name
+		template = template + " " + ctx.guild.get_role(role).name
 	template = template + "```"
 	await ctx.send(template)
+@commands.is_owner()
 @bot.command()
 async def clear_role(ctx):
 	config["role_whitelist"] = []
