@@ -1,121 +1,49 @@
 import discord
+from PIL import Image,ImageDraw,ImageFont
 from discord.ext import commands
-import json
+bot = commands.Bot(command_prefix="bb.",intents=discord.Intents.all())
+import asyncio
+import io
 import datetime
-bot = commands.Bot(command_prefix="CC.",intents=discord.Intents.all())
-config = {"white_list":[],"log_channel":None,"role_whitelist":[]}
-def save():
-	with open("save.json","w") as f:
-		json.dump(config, f)
 
 
+async def update_banner():
+	global bot
+	await bot.wait_until_ready()
+	guild = bot.get_guild(740487178773200978)
+	while True:
+		img = Image.open("banner.jpg")
+		draw = ImageDraw.Draw(img)
+		font = ImageFont.truetype("20082.ttf",20)
+		# draw.text((0, 0),"Sample Text",(255,255,255),font=font)
+		print((
+			int(img.size[0]/2), int(img.size[1]/2)
+			 ))
+		#time
+		delta = datetime.timedelta(hours=3, minutes=0)
+		tmp = datetime.datetime.now(datetime.timezone.utc) + delta
+		now = tmp.strftime("%H:%M")
+		draw.text((30,200),now,(255,255,255),font=font)
+		#members (online)
+		members_online = 0
+		for member in guild.members:
+			if member.status != discord.Status.offline:
+				members_online += 1
+		draw.text((350,250),f"{members_online} online",(255,255,255),font=font)
+		#members
+		draw.text((350,230),f"{guild.member_count} members",(255,255,255),font=font)
+		#members in voices
+		members_voice = 0
+		for voice in guild.voice_channels:
+			members_voice += len(voice.members)
+		draw.text((30,250),f"{members_voice} in voice",(255,255,255),font=font)
+		data = io.BytesIO()
+		img.save(data,"PNG")
+		data = data.getvalue()
+		await guild.edit(banner=data)	
+		await asyncio.sleep(10)
 
-def load():
-	with open("save.json","r") as f:
-		config = json.load(f)
-
-try:
-	load()
-except Exception as e:
-	print(e,":","можно игнорить")
-	save()
-@bot.command()
-async def set_log_channel(ctx,id:discord.TextChannel):
-	config["log_channel"] = id.id
-	await ctx.send("успешно установлено")
-	save()
-
-@bot.command()
-async def add(ctx,user:discord.Member):
-	config["white_list"].append(user.id)
-	await ctx.send("успешно установлено")
-	save()
-
-
-@bot.command(name="del")
-async def delete(ctx,user:discord.Member):
-	try:
-		config["white_list"].remove(user.id)
-		await ctx.send("успешно удален")
-		save()
-	except:
-		await ctx.send("такого юзера нет в списке")
-
-
-@bot.command()
-async def show(ctx):
-	template = "```"
-	for user in config["white_list"]:
-		template = template + " " + bot.get_user(user).name
-	template = template + "```"
-	await ctx.send(template)
-
-@bot.command()
-async def clear(ctx):
-	config["white_list"] = []
-	await ctx.send("успешно очищено")
-	save()
-
-#роли
-
-
-
-
-@bot.command()
-async def add_role(ctx,role:discord.Role):
-	config["role_whitelist"].append(role.id)
-	await ctx.send("успешно установлено")
-	save()
-
-
-@bot.command()
-async def del_role(ctx,role:discord.Role):
-	try:
-		config["role_whitelist"].remove(role.id)
-		await ctx.send("успешно удалено")
-		save()
-	except:
-		await ctx.send("такой роли нет в списке")
-
-
-@bot.command()
-async def show_role(ctx):
-	template = "```"
-	for role in config["role_whitelist"]:
-		template = template + " " + ctx.guild.get_role(role).name
-	template = template + "```"
-	await ctx.send(template)
-
-@bot.command()
-async def clear_role(ctx):
-	config["role_whitelist"] = []
-	await ctx.send("успешно очищено")
-	save()
-
-
-
-
-
-def get_current_time() -> datetime:
-        delta = datetime.timedelta(hours=3, minutes=0)
-        tmp = datetime.datetime.now(datetime.timezone.utc) + delta
-
-        return tmp.strftime("%A, %B %d %Y @ %H:%M:%S %p")
-
-@bot.event
-async def  on_member_update(before, after):
-	global config
-	now = get_current_time()
-	if before.status != after.status:
-		if after.id in config["white_list"]:
-			await bot.get_channel(config["log_channel"]).send(f"```{now} участник {after.name} сменил статус с {before.status} на {after.status} ```")
-		else:
-			for role in after.roles:
-				if role.id in config["role_whitelist"]:
-					await bot.get_channel(config["log_channel"]).send(f"``` {now} участник {after.name} сменил статус с {before.status} на {after.status} ```")
-					break
-
-
+bot.loop.create_task(update_banner())
 import os
-token = os.environ["TOKEN"]
+token = os.environ['TOKEN']
 bot.run(token)
